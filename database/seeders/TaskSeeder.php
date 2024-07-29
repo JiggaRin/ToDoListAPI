@@ -8,16 +8,25 @@ use App\Models\Task;
 
 class TaskSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $users = User::all();
 
         foreach ($users as $user) {
-            Task::factory()
-                ->count(5)
-                ->state(['user_id' => $user->id])
-                ->withSubTasks()
-                ->create();
+            $this->createTasksWithSubtasks($user->id,5, null);
+        }
+    }
+
+    private function createTasksWithSubtasks($userId, $count, $parentId = null): void
+    {
+        $tasks = Task::factory()->count($count)->state(['user_id' => $userId])->make(['parent_id' => $parentId]);
+
+        foreach ($tasks as $task) {
+            $task->save();
+            if (rand(0, 1)) {
+                $subtaskCount = rand(1, 3);
+                $this->createTasksWithSubtasks($userId, $subtaskCount, $task->id);
+            }
         }
     }
 }

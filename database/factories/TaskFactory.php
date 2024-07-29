@@ -10,10 +10,10 @@ class TaskFactory extends Factory
 {
     protected $model = Task::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'user_id' => User::factory(), // Замість фабрики, тут буде переданий існуючий user_id
+            'user_id' => User::factory(),
             'parent_id' => null,
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
@@ -23,16 +23,6 @@ class TaskFactory extends Factory
             'updated_at' => now(),
             'completed_at' => null,
         ];
-    }
-
-    public function withSubTasks()
-    {
-        return $this->afterCreating(function (Task $task) {
-            Task::factory()
-                ->count(rand(3, 7))
-                ->state(['user_id' => $task->user_id, 'parent_id' => $task->id])
-                ->create();
-        });
     }
 }
 

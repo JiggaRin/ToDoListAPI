@@ -56,9 +56,11 @@ class Task extends Model
     /**
      * @return bool
      */
-    public function scopeHasIncompletedSubTasks()
+    public function scopeHasIncompleteSubtasks($query)
     {
-        return $this->subTasks()->where('status', 'todo')->exists();
+        return $query->whereHas('subtasks', function ($q) {
+            $q->where('status', 'todo');
+        });
     }
 
     /**
