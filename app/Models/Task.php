@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,20 +55,40 @@ class Task extends Model
     }
 
     /**
+     * @param $query
      * @return bool
      */
-    public function scopeHasIncompleteSubtasks($query)
+    public function scopeHasIncompleteSubtasks($query): bool
     {
         return $query->whereHas('subtasks', function ($q) {
             $q->where('status', 'todo');
         });
     }
 
-    /**
-     * @return bool
-     */
-    public function scopeCanBeMarkedAsDone()
+    public function scopeStatus($query, $status)
     {
-        return !$this->hasIncompleteSubTasks();
+        if ($status) {
+            $query->where('status', $status);
+        }
+        return $query;
+    }
+
+    public function scopePriority($query, $priority)
+    {
+        if ($priority) {
+            $query->where('priority', $priority);
+        }
+        return $query;
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+        return $query;
     }
 }

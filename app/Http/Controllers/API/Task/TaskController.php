@@ -13,6 +13,7 @@ use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
@@ -21,6 +22,19 @@ class TaskController extends Controller
     public function __construct(TaskService $taskService)
     {
         $this->taskService = $taskService;
+    }
+
+    /**
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $filters = $request->only(['status', 'priority', 'search', 'sort']);
+        $tasks = $this->taskService->getTasks($filters);
+
+        return response()->json(['tasks' => $tasks]);
     }
 
     /**
@@ -100,10 +114,5 @@ class TaskController extends Controller
         $responseDTO = $this->taskService->deleteTask($task);
 
         return response()->json($responseDTO);
-    }
-
-    public function index(Request $request)
-    {
-
     }
 }

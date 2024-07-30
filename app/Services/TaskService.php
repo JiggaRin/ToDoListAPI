@@ -8,9 +8,41 @@ use App\DTO\Task\ShowTaskDTO;
 use App\DTO\Task\TaskResponseDTO;
 use App\DTO\Task\UpdateTaskDTO;
 use App\Models\Task;
+use Illuminate\Support\Collection;
 
 class TaskService
 {
+    /**
+     * @param array $filters
+     * @return Collection
+     */
+    public function getTasks(array $filters): Collection
+    {
+        $query = Task::where('user_id', auth()->id())
+            ->whereNull('parent_id')
+            ->status($filters['status'] ?? null)
+            ->priority($filters['priority'] ?? null)
+            ->search($filters['search'] ?? null);
+
+        if (!empty($filters['sort'])) {
+            foreach ($filters['sort'] as $sortField => $sortDirection) {
+                $query->orderBy($sortField, $sortDirection);
+            }
+        }
+
+        $parentTasks = $query->with(['subtasks' => function ($query) use ($filters) {
+            if (!empty($filters['sort'])) {
+                foreach ($filters['sort'] as $sortField => $sortDirection) {
+                    $query->orderBy($sortField, $sortDirection);
+                }
+            }
+        }])->get();
+
+        return $parentTasks->map(function ($task) use ($filters) {
+            return $this->getSubTask($task, $filters);
+        });
+    }
+
     /**
      * @param int $taskId
      * @return ShowTaskDTO
@@ -113,15 +145,29 @@ class TaskService
 
     /**
      * @param Task $task
+     * @param array|null $filters
      * @return ShowTaskDTO
      */
-    private function getSubTask(Task $task): ShowTaskDTO
+    private function getSubTask(Task $task, array|null $filters = null): ShowTaskDTO
     {
         $taskDTO = new ShowTaskDTO($task);
 
-        if(count($task->subTasks)) {
-            foreach ($task->subTasks as $subTask) {
-                $taskDTO->subTasks[] = $this->getSubTask($subTask);
+        $subtasksQuery = $task->subtasks()->status($filters['status'] ?? null)
+            ->priority($filters['priority'] ?? null)
+            ->search($filters['search'] ?? null);
+
+        if (!empty($filters['sort'])) {
+            foreach ($filters['sort'] as $sortField => $sortDirection) {
+                $subtasksQuery->orderBy($sortField, $sortDirection);
+            }
+        }
+
+        $subtasks = $subtasksQuery->get();
+
+
+        if ($subtasks->count()) {
+            foreach ($subtasks as $subTask) {
+                $taskDTO->subTasks[] = $this->getSubTask($subTask, $filters);
             }
         } else {
             unset($taskDTO->subTasks);
@@ -130,5 +176,3 @@ class TaskService
         return $taskDTO;
     }
 }
-
-
