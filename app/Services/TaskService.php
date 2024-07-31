@@ -8,35 +8,30 @@ use App\DTO\Task\ShowTaskDTO;
 use App\DTO\Task\TaskResponseDTO;
 use App\DTO\Task\UpdateTaskDTO;
 use App\Models\Task;
+use App\Repositories\TaskRepositoryInterface;
 use Illuminate\Support\Collection;
 
 class TaskService
 {
+    protected TaskRepositoryInterface $taskRepository;
+
     /**
+     * @param TaskRepositoryInterface $taskRepository
+     */
+    public function __construct(TaskRepositoryInterface $taskRepository)
+    {
+        $this->taskRepository = $taskRepository;
+    }
+
+    /**
+     * Get list of tasks
+     *
      * @param array $filters
      * @return Collection
      */
     public function getTasks(array $filters): Collection
     {
-        $query = Task::where('user_id', auth()->id())
-            ->whereNull('parent_id')
-            ->status($filters['status'] ?? null)
-            ->priority($filters['priority'] ?? null)
-            ->search($filters['search'] ?? null);
-
-        if (!empty($filters['sort'])) {
-            foreach ($filters['sort'] as $sortField => $sortDirection) {
-                $query->orderBy($sortField, $sortDirection);
-            }
-        }
-
-        $parentTasks = $query->with(['subtasks' => function ($query) use ($filters) {
-            if (!empty($filters['sort'])) {
-                foreach ($filters['sort'] as $sortField => $sortDirection) {
-                    $query->orderBy($sortField, $sortDirection);
-                }
-            }
-        }])->get();
+        $parentTasks = $this->taskRepository->getTasksByFilters($filters);
 
         return $parentTasks->map(function ($task) use ($filters) {
             return $this->getSubTask($task, $filters);
@@ -44,24 +39,26 @@ class TaskService
     }
 
     /**
+     * Get specific task
+     *
      * @param int $taskId
      * @return ShowTaskDTO
      */
     public function showTask(int $taskId): ShowTaskDTO
     {
-        $task = Task::with('subTasks.subTasks')->findOrFail($taskId);
+        $task = $this->taskRepository->showTaskWithSubtasks($taskId);
         return $this->getSubTask($task);
     }
 
     /**
+     * Create task
+     *
      * @param CreateTaskDTO $taskDTO
      * @return TaskResponseDTO
      */
     public function createTask(CreateTaskDTO $taskDTO): TaskResponseDTO
     {
-        $task = new Task();
-        $task->fill((array)$taskDTO);
-        $task->save();
+        $task = $this->taskRepository->create((array) $taskDTO);
 
         return new TaskResponseDTO(
             $task->wasRecentlyCreated,
@@ -70,6 +67,8 @@ class TaskService
     }
 
     /**
+     * Update specific task
+     *
      * @param Task $task
      * @param UpdateTaskDTO $taskDTO
      * @return TaskResponseDTO
@@ -82,12 +81,11 @@ class TaskService
             }
         }
 
-        $taskData = array_filter((array)$taskDTO, function ($value) {
+        $taskData = array_filter((array) $taskDTO, function ($value) {
             return !is_null($value);
         });
 
-        $task->fill($taskData);
-        $updated = $task->save();
+        $updated = $this->taskRepository->update($task, $taskData);
 
         return new TaskResponseDTO(
             $updated,
@@ -96,6 +94,8 @@ class TaskService
     }
 
     /**
+     * Change status of specific task
+     *
      * @param Task $task
      * @param ChangeTaskStatusDTO $taskDTO
      * @return TaskResponseDTO
@@ -112,8 +112,7 @@ class TaskService
             $taskDTO->setCompletedAt(null);
         }
 
-        $task->fill((array)$taskDTO);
-        $updated = $task->save();
+        $updated = $this->taskRepository->update($task, (array) $taskDTO);
 
         return new TaskResponseDTO(
             $updated,
@@ -122,6 +121,8 @@ class TaskService
     }
 
     /**
+     * Delete specific task
+     *
      * @param Task $task
      * @return TaskResponseDTO
      */
@@ -135,7 +136,7 @@ class TaskService
             return new TaskResponseDTO(false, 'Cannot delete a task with completed subtasks.');
         }
 
-        $deleted = $task->delete();
+        $deleted = $this->taskRepository->delete($task);
 
         return new TaskResponseDTO(
             $deleted,
@@ -144,6 +145,8 @@ class TaskService
     }
 
     /**
+     * Get subtasks of specific task
+     *
      * @param Task $task
      * @param array|null $filters
      * @return ShowTaskDTO
@@ -163,7 +166,6 @@ class TaskService
         }
 
         $subtasks = $subtasksQuery->get();
-
 
         if ($subtasks->count()) {
             foreach ($subtasks as $subTask) {

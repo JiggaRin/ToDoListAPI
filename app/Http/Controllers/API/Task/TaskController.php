@@ -13,18 +13,21 @@ use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
     protected TaskService $taskService;
 
+    /**
+     * @param TaskService $taskService
+     */
     public function __construct(TaskService $taskService)
     {
         $this->taskService = $taskService;
     }
 
     /**
+     * Display all (filtered) tasks.
      *
      * @param Request $request
      * @return JsonResponse
@@ -38,6 +41,8 @@ class TaskController extends Controller
     }
 
     /**
+     * Display the specified task.
+     *
      * @param int $id
      * @return JsonResponse
      */
@@ -48,6 +53,8 @@ class TaskController extends Controller
     }
 
     /**
+     * Store a newly created task.
+     *
      * @param CreateTaskRequest $request
      * @return JsonResponse
      */
@@ -60,9 +67,7 @@ class TaskController extends Controller
             priority: $request->get('priority'),
             parent_id: $request->get('parent_id'),
             description: $request->get('description'),
-            completed_at: $request->get('status') !== null && $request->get('status') === 'done'
-                ? now()->toDateTimeString()
-                : null
+            completed_at: $request->get('status') === 'done' ? now()->toDateTimeString() : null
         );
 
         $responseDTO = $this->taskService->createTask($taskDTO);
@@ -71,6 +76,8 @@ class TaskController extends Controller
     }
 
     /**
+     * Update the specified task.
+     *
      * @param UpdateTaskRequest $request
      * @param Task $task
      * @return JsonResponse
@@ -83,9 +90,7 @@ class TaskController extends Controller
             priority: $request->get('priority'),
             parent_id: $request->get('parent_id'),
             description: $request->get('description'),
-            completed_at: $request->get('status') !== null && $request->get('status') === 'done'
-                ? now()->toDateTimeString()
-                : null
+            completed_at: $request->get('status') === 'done' ? now()->toDateTimeString() : null
         );
 
         $responseDTO = $this->taskService->updateTask($task, $taskDTO);
@@ -93,11 +98,18 @@ class TaskController extends Controller
         return response()->json($responseDTO);
     }
 
+    /**
+     * Change the status of the specified task.
+     *
+     * @param ChangeTaskStatusRequest $request
+     * @param Task $task
+     * @return JsonResponse
+     */
     public function changeStatus(ChangeTaskStatusRequest $request, Task $task): JsonResponse
     {
         $taskDTO = new ChangeTaskStatusDTO(
             status: $request->get('status'),
-            completed_at: null
+            completed_at: $request->get('status') === 'done' ? now()->toDateTimeString() : null
         );
 
         $responseDTO = $this->taskService->changeStatus($task, $taskDTO);
@@ -106,6 +118,8 @@ class TaskController extends Controller
     }
 
     /**
+     * Remove the specified task.
+     *
      * @param Task $task
      * @return JsonResponse
      */
