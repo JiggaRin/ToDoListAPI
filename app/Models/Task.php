@@ -56,9 +56,9 @@ class Task extends Model
 
     /**
      * @param $query
-     * @return bool
+     * @return Builder
      */
-    public function scopeHasIncompleteSubtasks($query): bool
+    public function scopeHasIncompleteSubtasks($query): Builder
     {
         return $query->whereHas('subtasks', function ($q) {
             $q->where('status', 'todo');

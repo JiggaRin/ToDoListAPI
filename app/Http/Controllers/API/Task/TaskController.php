@@ -8,6 +8,7 @@ use App\DTO\Task\UpdateTaskDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\ChangeTaskStatusRequest;
 use App\Http\Requests\Task\CreateTaskRequest;
+use App\Http\Requests\Task\TaskFiltersRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
@@ -29,10 +30,10 @@ class TaskController extends Controller
     /**
      * Display all (filtered) tasks.
      *
-     * @param Request $request
+     * @param TaskFiltersRequest $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(TaskFiltersRequest $request): JsonResponse
     {
         $filters = $request->only(['status', 'priority', 'search', 'sort']);
         $tasks = $this->taskService->getTasks($filters);

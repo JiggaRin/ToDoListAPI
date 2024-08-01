@@ -11,7 +11,7 @@ Route::prefix('tasks')->middleware('auth:sanctum')->group(function () {
 
     Route::middleware('userCheck:App\Models\Task')->group(function () {
         Route::get('/show/{task}', [TaskController::class, 'show'])->name('tasks.show');
-        Route::post('/change-status/{task}', [TaskController::class, 'changeStatus'])->name('tasks.change-status');
+        Route::patch('/change-status/{task}', [TaskController::class, 'changeStatus'])->name('tasks.change-status');
         Route::put('/update/{task}', [TaskController::class, 'update'])->name('tasks.update');
         Route::delete('/destroy/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     });
