@@ -60,7 +60,7 @@ Copy the `.env.example` file to `.env` and configure your environment settings.<
 "email": "user@example.com",
 "password": "yourpassword"
 }`<br>
-**Response:**
+**Response:**<br>
 `{
 "access_token": "your_access_token",
 "token_type": "Bearer"
