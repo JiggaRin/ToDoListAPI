@@ -1,0 +1,767 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ToDo List API",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login",
+                "operationId": "2b0c7f9d36d3c5b190b8760b8ae3633e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "operationId": "2e64bb293ab933b3953426e6932d882c",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Get a list of tasks",
+                "operationId": "18717e7964bb379a319e7c2eccdc96b1",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter tasks by status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priority",
+                        "in": "query",
+                        "description": "Filter tasks by priority",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search tasks by title or description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort tasks by multiple fields and directions. Provide sorting as an object with field names and directions. You can sort by priority, created_at, completed_at",
+                        "required": false,
+                        "schema": {
+                            "properties": {
+                                "completed_at": {
+                                    "description": "Sort direction for the 'completed_at' field.",
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                },
+                                "created_at": {
+                                    "description": "Sort direction for the 'created_at' field.",
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                }
+                            },
+                            "type": "object",
+                            "example": {
+                                "completed_at": "desc",
+                                "created_at": "asc"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of tasks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "tasks": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Task"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "operationId": "5bd1121aa4a0bb52b5468155c4084d3e",
+                "requestBody": {
+                    "description": "Create Task Request",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Task created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks/show/{task}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Show a specific task",
+                "operationId": "6c4ba7d908a58e17f846cfca17f59005",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the task to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Task retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Task"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "404": {
+                        "description": "Task not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks/{task}": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Update specified task",
+                "operationId": "9da3a9bef6124e995524be1f8172f0f8",
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "description": "ID of the task to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update Task Request",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/tasks/change-status": {
+            "patch": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Change status for specified task",
+                "operationId": "54df735992c832d87c71504c26bc1af0",
+                "requestBody": {
+                    "description": "Change Task Status",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeTaskStatusRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tasks/{id}": {
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Delete specified task",
+                "operationId": "0129a8429a7b95f8f90d1efc1d7db5a9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the task to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Indicates if the operation was successful",
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "description": "Operation message",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Error message indicating what went wrong.",
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "description": "Validation errors for each field.",
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Task": {
+                "description": "Represents tasks with its details and subtasks.",
+                "required": [
+                    "id",
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the task.",
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "description": "ID of the user.",
+                        "type": "integer"
+                    },
+                    "parent_id": {
+                        "description": "The ID of the parent task, if any.",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "The title of the task.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "A detailed description of the task.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "The current status of the task.",
+                        "type": "string"
+                    },
+                    "priority": {
+                        "description": "The priority level of the task.",
+                        "type": "integer"
+                    },
+                    "completed_at": {
+                        "description": "The date and time when the task was completed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "subtasks": {
+                        "description": "A list of subtasks associated with this task.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CreateTaskDTO": {
+                "description": "Data Transfer Object for creating a new task",
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "The title of the task",
+                        "type": "string",
+                        "example": "Buy groceries"
+                    },
+                    "status": {
+                        "description": "The status of the task",
+                        "type": "string",
+                        "default": "todo",
+                        "example": "todo"
+                    },
+                    "priority": {
+                        "description": "The priority level of the task",
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1
+                    },
+                    "parent_id": {
+                        "description": "The ID of the parent task, if any",
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "A detailed description of the task",
+                        "type": "string",
+                        "example": "Buy milk, eggs, and bread",
+                        "nullable": true
+                    },
+                    "completed_at": {
+                        "description": "The date and time when the task was completed",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-08-01T12:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTaskDTO": {
+                "description": "Data Transfer Object for updating an existing task",
+                "properties": {
+                    "title": {
+                        "description": "The title of the task",
+                        "type": "string",
+                        "example": "Buy groceries",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "The status of the task",
+                        "type": "string",
+                        "default": "todo",
+                        "example": "todo",
+                        "nullable": true
+                    },
+                    "priority": {
+                        "description": "The priority level of the task",
+                        "type": "integer",
+                        "default": 1,
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "A detailed description of the task",
+                        "type": "string",
+                        "example": "Buy milk, eggs, and bread",
+                        "nullable": true
+                    },
+                    "parent_id": {
+                        "description": "The ID of the parent task, if any",
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "completed_at": {
+                        "description": "The date and time when the task was completed",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-08-01T12:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ChangeTaskStatusDTO": {
+                "description": "Data Transfer Object for changing the status of a task",
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "The new status of the task",
+                        "type": "string",
+                        "example": "done"
+                    },
+                    "completed_at": {
+                        "description": "The date and time when the task was completed",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-08-01T12:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "TaskResponseDTO": {
+                "description": "The object with response after proceeding requests",
+                "type": "object"
+            },
+            "CreateTaskRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "The title of the task. This field is required.",
+                        "type": "string",
+                        "example": "Complete project report"
+                    },
+                    "description": {
+                        "description": "A detailed description of the task. This field is optional.",
+                        "type": "string",
+                        "example": "The report should include all recent project developments."
+                    },
+                    "priority": {
+                        "description": "The priority level of the task (1-5). This field is optional and and will be set by default 1.",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "status": {
+                        "description": "The current status of the task (todo, done). This field is optional and will be set by default todo",
+                        "type": "string",
+                        "example": "todo"
+                    },
+                    "parent_id": {
+                        "description": "The ID of the parent task, if any. This field is optional.",
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTaskRequest": {
+                "description": "Request body for updating a task",
+                "properties": {
+                    "title": {
+                        "description": "The title of the task",
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "A detailed description of the task",
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "priority": {
+                        "description": "The priority level of the task",
+                        "type": "integer",
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ],
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "The current status of the task",
+                        "type": "string",
+                        "enum": [
+                            "todo",
+                            "done"
+                        ],
+                        "nullable": true
+                    },
+                    "parent_id": {
+                        "description": "The ID of the parent task, if any",
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ChangeTaskStatusRequest": {
+                "description": "Request body for changing the status of a task",
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "The new status of the task",
+                        "type": "string",
+                        "enum": [
+                            "todo",
+                            "done"
+                        ],
+                        "example": "done"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "description": "Validation error response",
+                "properties": {
+                    "message": {
+                        "description": "Error message indicating what went wrong.",
+                        "type": "string"
+                    },
+                    "errors": {
+                        "description": "Validation errors for each field.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer received_token)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Tasks",
+            "description": "Tasks"
+        }
+    ]
+}
