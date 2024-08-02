@@ -26,8 +26,8 @@ The Todo List API is a RESTful API designed to manage tasks within a to-do list.
 
 ## Requirements
 
-- PHP 8.1
-- Laravel or Symfony
+- PHP 8.1+
+- Laravel
 - Docker Compose for environment setup
 
 ## Setup
@@ -76,11 +76,3 @@ Response:<br>
 ### Documentation Endpoint
 
 `/api/documentation`
-## Code Style
-
-Follow [PSR-12](https://www.php-fig.org/psr/psr-12/) coding standards.
-
-## Database
-
-- Used seeders to populate the database.
-- Implemented necessary indexes for optimized performance.
