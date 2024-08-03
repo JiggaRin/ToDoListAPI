@@ -246,14 +246,14 @@ namespace App\Http\Controllers;
  *          nullable=true,
  *          enum={1,2,3,4,5}
  *      ),
- * @OA\Property(
+ *      @OA\Property(
  *          property="status",
  *          type="string",
  *          description="The current status of the task",
  *          nullable=true,
  *          enum={"todo","done"}
  *      ),
- * @OA\Property(
+ *      @OA\Property(
  *          property="parent_id",
  *          type="integer",
  *          description="The ID of the parent task, if any",

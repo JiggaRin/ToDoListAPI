@@ -248,7 +248,7 @@ components:
           enum:
             - todo
             - done
-          example: done
+          example: todo
       required:
         - status
 
@@ -313,7 +313,7 @@ paths:
           description: Successful logout
         '401':
           description: Unauthorized
-  /api/tasks:
+  /tasks:
     get:
       summary: Get a list of tasks
       tags:
@@ -407,7 +407,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /tasks:
+  /tasks/store:
     post:
       summary: Create a new task
       tags:
@@ -418,7 +418,7 @@ paths:
         description: Create Task Request
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/CreateTaskRequest'
       responses:
@@ -433,8 +433,8 @@ paths:
         '401':
           description: Unauthorized
 
-  /api/tasks/update/{task}:
-    patch:
+  /tasks/update/{task}:
+    put:
       summary: Update a task
       tags:
         - Tasks
@@ -451,7 +451,7 @@ paths:
         description: Update Task Request
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/UpdateTaskRequest'
       responses:
@@ -468,8 +468,8 @@ paths:
         '401':
           description: Unauthorized
 
-  /api/tasks/change-status/{task}:
-    patch:
+  /tasks/change-status/{task}:
+    put:
       summary: Change the status of a task
       tags:
         - Tasks
@@ -486,7 +486,7 @@ paths:
         description: Change Task Status Request
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/ChangeTaskStatusRequest'
       responses:
@@ -502,3 +502,36 @@ paths:
           description: Task not found
         '401':
           description: Unauthorized
+
+  /tasks/destroy/{task}:
+    delete:
+      summary: "Delete specified task"
+      tags:
+        - "Tasks"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: "task"
+          in: "path"
+          description: "ID of the task to delete"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+                    description: "Indicates if the operation was successful"
+                  message:
+                    type: "string"
+                    description: "Operation message"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not Found"

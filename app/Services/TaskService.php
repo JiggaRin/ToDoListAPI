@@ -126,8 +126,10 @@ class TaskService
      * @param Task $task
      * @return TaskResponseDTO
      */
-    public function deleteTask(Task $task): TaskResponseDTO
+    public function deleteTask(int $task_id): TaskResponseDTO
     {
+        $task = Task::findOrFail($task_id);
+
         if ($task->status === 'done') {
             return new TaskResponseDTO(false, 'Cannot delete a task that is already done.');
         }

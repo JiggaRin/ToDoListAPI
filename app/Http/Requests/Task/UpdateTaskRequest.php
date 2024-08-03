@@ -9,7 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\StatusEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class UpdateTaskRequest extends FormRequest
 {
