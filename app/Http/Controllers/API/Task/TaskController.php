@@ -13,6 +13,7 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Info(title="ToDo List API", version="1.0")
@@ -234,6 +235,7 @@ class TaskController extends Controller
      *     path="/api/tasks/change-status/{task}",
      *     summary="Change status for specified task",
      *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *          name="task",
      *          in="path",

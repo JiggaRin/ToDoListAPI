@@ -76,7 +76,7 @@ class TaskService
     public function updateTask(Task $task, UpdateTaskDTO $taskDTO): TaskResponseDTO
     {
         if (isset($taskDTO->status) && $taskDTO->status === 'done') {
-            if ($task->subtasks()->hasIncompleteSubtasks()->exists()) {
+            if ($task->hasIncompleteSubtasks()->exists()) {
                 return new TaskResponseDTO(false, 'Cannot set status Done for a task with uncompleted subtasks.');
             }
         }
@@ -103,7 +103,7 @@ class TaskService
     public function changeStatus(Task $task, ChangeTaskStatusDTO $taskDTO): TaskResponseDTO
     {
         if ($taskDTO->status === 'done') {
-            if ($task->subtasks()->hasIncompleteSubtasks()->exists()) {
+            if ($task->hasIncompleteSubtasks()->exists()) {
                 return new TaskResponseDTO(false, 'Cannot set status Done for a task with uncompleted subtasks.');
             }
 
@@ -123,7 +123,7 @@ class TaskService
     /**
      * Delete specific task
      *
-     * @param Task $task
+     * @param int $task_id
      * @return TaskResponseDTO
      */
     public function deleteTask(int $task_id): TaskResponseDTO

@@ -282,7 +282,6 @@ namespace App\Http\Controllers;
  *      @OA\Property(
  *          property="message",
  *          type="string",
- *          description="Error message indicating what went wrong."
  *      ),
  *      @OA\Property(
  *          property="errors",

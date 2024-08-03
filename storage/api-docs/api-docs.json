@@ -392,7 +392,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/tasks/destroy/{task}": {
@@ -715,7 +720,6 @@
                 "description": "Validation error response",
                 "properties": {
                     "message": {
-                        "description": "Error message indicating what went wrong.",
                         "type": "string"
                     },
                     "errors": {
