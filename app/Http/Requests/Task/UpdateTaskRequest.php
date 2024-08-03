@@ -10,6 +10,7 @@ use App\Enums\StatusEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -52,5 +53,18 @@ class UpdateTaskRequest extends FormRequest
                 },
             ]
         ];
+    }
+
+    /**
+     * @param Validator|\Illuminate\Contracts\Validation\Validator $validator
+     * @return mixed
+     * @throws ValidationException
+     */
+    protected function failedValidation(Validator|\Illuminate\Contracts\Validation\Validator $validator): mixed
+    {
+        throw new ValidationException(
+            $validator,
+            response()->json($validator->errors(), 422)
+        );
     }
 }

@@ -108,7 +108,7 @@ class TaskController extends Controller
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *          name="id",
+     *          name="task",
      *          in="path",
      *          description="ID of the task to retrieve",
      *          required=true,
@@ -137,7 +137,7 @@ class TaskController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\POST(
      *     path="/api/tasks/store",
      *     summary="Create a new task",
      *     tags={"Tasks"},
@@ -145,11 +145,15 @@ class TaskController extends Controller
      *     @OA\RequestBody(
      *         description="Create Task Request",
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/CreateTaskRequest")
+     *         @OA\MediaType(
+     *               mediaType="application/x-www-form-urlencoded",
+     *               @OA\Schema(ref="#/components/schemas/CreateTaskRequest")
+     *          ),
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation"
+     *         response=201,
+     *         description="Task created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Task")
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -161,8 +165,6 @@ class TaskController extends Controller
      */
     public function store(CreateTaskRequest $request): JsonResponse
     {
-        print_r($request->validated());
-        die();
         $taskDTO = new CreateTaskDTO(
             user_id: auth()->id(),
             title: $request->get('title'),
@@ -180,7 +182,7 @@ class TaskController extends Controller
 
     /**
      * @OA\PUT(
-     *     path="/api/tasks/update/{id}",
+     *     path="/api/tasks/update/{task}",
      *     summary="Update specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -194,7 +196,10 @@ class TaskController extends Controller
      *     @OA\RequestBody(
      *         description="Update Task Request",
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateTaskRequest")
+     *         @OA\MediaType(
+     *              mediaType="application/x-www-form-urlencoded",
+     *              @OA\Schema(ref="#/components/schemas/UpdateTaskRequest")
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -226,21 +231,25 @@ class TaskController extends Controller
     }
 
     /**
-     * @OA\PATCH(
+     * @OA\PUT(
      *     path="/api/tasks/change-status/{task}",
      *     summary="Change status for specified task",
      *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *           name="id",
-     *           in="path",
-     *           description="ID of the task to retrieve",
-     *           required=true,
-     *           @OA\Schema(type="integer")
-     *       ),
+     *          name="task",
+     *          in="path",
+     *          description="ID of the task to update",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *      ),
      *     @OA\RequestBody(
      *         description="Change Task Status",
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/ChangeTaskStatusRequest")
+     *           @OA\MediaType(
+     *                mediaType="application/x-www-form-urlencoded",
+     *                @OA\Schema(ref="#/components/schemas/ChangeTaskStatusRequest")
+     *           ),
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -267,12 +276,12 @@ class TaskController extends Controller
 
     /**
      * @OA\DELETE(
-     *     path="/api/tasks/{id}",
+     *     path="/api/tasks/destroy/{task}",
      *     summary="Delete specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="task",
      *         in="path",
      *         description="ID of the task to delete",
      *         required=true,
@@ -295,33 +304,13 @@ class TaskController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Invalid request",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 description="Error message indicating what went wrong."
-     *             ),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 description="Validation errors for each field.",
-     *                 @OA\AdditionalProperties(
-     *                     type="array",
-     *                     @OA\Items(type="string")
-     *                 )
-     *             )
-     *         )
-     *     ),
      *     @OA\Response(response=401, description="Unauthorized"),
      *     @OA\Response(response=404, description="Not Found")
      * )
      */
-    public function destroy(Task $task): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $responseDTO = $this->taskService->deleteTask($task);
+        $responseDTO = $this->taskService->deleteTask($id);
 
         return response()->json($responseDTO);
     }
