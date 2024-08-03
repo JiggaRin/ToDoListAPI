@@ -189,54 +189,6 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Create a new task",
-                "operationId": "5bd1121aa4a0bb52b5468155c4084d3e",
-                "requestBody": {
-                    "description": "Create Task Request",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateTaskRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Task created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Task"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationError"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/tasks/show/{task}": {
@@ -293,13 +245,56 @@
                 ]
             }
         },
-        "/api/tasks/{task}": {
+        "/api/tasks/store": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "operationId": "d473de3f5f10f556d65c15212c685f40",
+                "requestBody": {
+                    "description": "Create Task Request",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks/update/{id}": {
             "put": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Update specified task",
-                "operationId": "9da3a9bef6124e995524be1f8172f0f8",
+                "operationId": "c3006e47ba43403b2d16d471c028aa8c",
                 "parameters": [
                     {
                         "name": "task",
@@ -347,13 +342,24 @@
                 ]
             }
         },
-        "api/tasks/change-status": {
+        "/api/tasks/change-status/{task}": {
             "patch": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Change status for specified task",
-                "operationId": "54df735992c832d87c71504c26bc1af0",
+                "operationId": "2f13ca543da83d18dbab34bebb9bc3d5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the task to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Change Task Status",
                     "required": true,
@@ -630,34 +636,43 @@
                 "type": "object"
             },
             "CreateTaskRequest": {
-                "required": [
-                    "title"
-                ],
                 "properties": {
                     "title": {
-                        "description": "The title of the task. This field is required.",
+                        "description": "The title of the task",
                         "type": "string",
-                        "example": "Complete project report"
+                        "maxLength": 255
                     },
                     "description": {
-                        "description": "A detailed description of the task. This field is optional.",
+                        "description": "A detailed description of the task",
                         "type": "string",
-                        "example": "The report should include all recent project developments."
+                        "maxLength": 255,
+                        "nullable": true
                     },
                     "priority": {
-                        "description": "The priority level of the task (1-5). This field is optional and and will be set by default 1.",
+                        "description": "The priority level of the task",
                         "type": "integer",
-                        "example": 3
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ],
+                        "nullable": true
                     },
                     "status": {
-                        "description": "The current status of the task (todo, done). This field is optional and will be set by default todo",
+                        "description": "The current status of the task",
                         "type": "string",
-                        "example": "todo"
+                        "enum": [
+                            "todo",
+                            "done"
+                        ],
+                        "nullable": true
                     },
                     "parent_id": {
-                        "description": "The ID of the parent task, if any. This field is optional.",
+                        "description": "The ID of the parent task, if any",
                         "type": "integer",
-                        "example": 5
+                        "nullable": true
                     }
                 },
                 "type": "object"

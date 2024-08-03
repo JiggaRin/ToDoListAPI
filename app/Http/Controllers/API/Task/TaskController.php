@@ -13,6 +13,7 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Info(title="ToDo List API", version="1.0")
@@ -136,8 +137,8 @@ class TaskController extends Controller
     }
 
     /**
-     * @OA\POST(
-     *     path="/api/tasks",
+     * @OA\Post(
+     *     path="/api/tasks/store",
      *     summary="Create a new task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -147,9 +148,8 @@ class TaskController extends Controller
      *         @OA\JsonContent(ref="#/components/schemas/CreateTaskRequest")
      *     ),
      *     @OA\Response(
-     *         response=201,
-     *         description="Task created successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/Task")
+     *         response=200,
+     *         description="Successful operation"
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -161,6 +161,8 @@ class TaskController extends Controller
      */
     public function store(CreateTaskRequest $request): JsonResponse
     {
+        print_r($request->validated());
+        die();
         $taskDTO = new CreateTaskDTO(
             user_id: auth()->id(),
             title: $request->get('title'),
@@ -178,7 +180,7 @@ class TaskController extends Controller
 
     /**
      * @OA\PUT(
-     *     path="/api/tasks/{task}",
+     *     path="/api/tasks/update/{id}",
      *     summary="Update specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -225,9 +227,16 @@ class TaskController extends Controller
 
     /**
      * @OA\PATCH(
-     *     path="api/tasks/change-status",
+     *     path="/api/tasks/change-status/{task}",
      *     summary="Change status for specified task",
      *     tags={"Tasks"},
+     *     @OA\Parameter(
+     *           name="id",
+     *           in="path",
+     *           description="ID of the task to retrieve",
+     *           required=true,
+     *           @OA\Schema(type="integer")
+     *       ),
      *     @OA\RequestBody(
      *         description="Change Task Status",
      *         required=true,

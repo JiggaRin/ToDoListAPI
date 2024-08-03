@@ -4,6 +4,11 @@ info:
   version: '1.0'
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       type: object
@@ -42,6 +47,7 @@ components:
         - name
         - email
         - password
+
     Task:
       type: object
       description: Represents tasks with its details and subtasks.
@@ -178,27 +184,38 @@ components:
 
     CreateTaskRequest:
       type: object
+      description: Request body for updating a task
       properties:
         title:
           type: string
-          description: The title of the task. This field is required.
-          example: Complete project report
+          description: The title of the task
+          maxLength: 255
         description:
           type: string
-          description: A detailed description of the task. This field is optional.
-          example: The report should include all recent project developments.
+          description: A detailed description of the task
+          nullable: true
+          maxLength: 255
         priority:
           type: integer
-          description: The priority level of the task (1-5). This field is optional and will be set by default 1.
-          example: 3
+          description: The priority level of the task
+          nullable: true
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
         status:
           type: string
-          description: The current status of the task (todo, done). This field is optional and will be set by default todo.
-          example: todo
+          description: The current status of the task
+          nullable: true
+          enum:
+            - todo
+            - done
         parent_id:
           type: integer
-          description: The ID of the parent task, if any. This field is optional.
-          example: 5
+          description: The ID of the parent task, if any
+          nullable: true
       required:
         - title
 

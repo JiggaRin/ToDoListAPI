@@ -188,36 +188,40 @@ namespace App\Http\Controllers;
  * @OA\Schema(
  *     schema="CreateTaskRequest",
  *     type="object",
- *     @OA\Property(
- *         property="title",
- *         type="string",
- *         description="The title of the task. This field is required.",
- *         example="Complete project report"
- *     ),
- *     @OA\Property(
- *         property="description",
- *         type="string",
- *         description="A detailed description of the task. This field is optional.",
- *         example="The report should include all recent project developments."
- *     ),
- *     @OA\Property(
- *         property="priority",
- *         type="integer",
- *         description="The priority level of the task (1-5). This field is optional and and will be set by default 1.",
- *         example=3
- *     ),
- *     @OA\Property(
- *         property="status",
- *         type="string",
- *         description="The current status of the task (todo, done). This field is optional and will be set by default todo",
- *         example="todo"
- *     ),
- *     @OA\Property(
- *         property="parent_id",
- *         type="integer",
- *         description="The ID of the parent task, if any. This field is optional.",
- *         example=5
- *     ),
+ *      @OA\Property(
+ *          property="title",
+ *          type="string",
+ *          description="The title of the task",
+ *          maxLength=255
+ *      ),
+ *      @OA\Property(
+ *          property="description",
+ *          type="string",
+ *          description="A detailed description of the task",
+ *          nullable=true,
+ *          maxLength=255
+ *      ),
+ *      @OA\Property(
+ *          property="priority",
+ *          type="integer",
+ *          description="The priority level of the task",
+ *          nullable=true,
+ *          enum={1,2,3,4,5}
+ *      ),
+ * @OA\Property(
+ *          property="status",
+ *          type="string",
+ *          description="The current status of the task",
+ *          nullable=true,
+ *          enum={"todo","done"}
+ *      ),
+ * @OA\Property(
+ *          property="parent_id",
+ *          type="integer",
+ *          description="The ID of the parent task, if any",
+ *          nullable=true
+ *      )
+ *  )
  *     required={"title"}
  * )
  *

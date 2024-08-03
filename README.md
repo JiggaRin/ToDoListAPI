@@ -42,10 +42,15 @@ The Todo List API is a RESTful API designed to manage tasks within a to-do list.
 3. **Set Up Environment**<br>
 Copy the `.env.example` file to `.env` and configure your environment settings.<br>
    `cp .env.example .env`
-4. **Run Migrations and Seeders**<br>
+4. **Start the Development Server**<br>
+      `docker-compose up -d`
+5. **Run Migrations and Seeders**<br>
 `php artisan migrate --seed`
-5. **Start the Development Server**<br>
-`docker-compose up -d`
+6. **Generate Application Key**<br>
+`php artisan key:generate`
+7. **Run local server**<br>
+`php artisan serve`
+
 
 ## Usage
 
