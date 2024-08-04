@@ -13,7 +13,6 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Info(title="ToDo List API", version="1.0")
@@ -40,14 +39,21 @@ class TaskController extends Controller
      *          name="status",
      *          in="query",
      *          description="Filter tasks by status",
-     *          @OA\Schema(type="string")
+     *          required=false,
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"todo", "done"}
+     *          )
      *      ),
      *      @OA\Parameter(
      *          name="priority",
      *          in="query",
      *          description="Filter tasks by priority",
      *          required=false,
-     *          @OA\Schema(type="integer")
+     *          @OA\Schema(
+     *              type="integer",
+     *              enum={1, 2, 3, 4, 5}
+     *          )
      *      ),
      *      @OA\Parameter(
      *          name="search",
@@ -57,27 +63,35 @@ class TaskController extends Controller
      *          @OA\Schema(type="string")
      *      ),
      *      @OA\Parameter(
-     *          name="sort",
+     *          name="sort[completed_at]",
      *          in="query",
-     *          description="Sort tasks by multiple fields and directions. Provide sorting as an object with field names and directions. You can sort by priority, created_at, completed_at",
+     *          description="Sort direction for the 'completed_at' field.",
      *          required=false,
-     *      @OA\Schema(
-     *          type="object",
-     *          @OA\Property(
-     *              property="completed_at",
+     *          @OA\Schema(
      *              type="string",
-     *              enum={"asc", "desc"},
-     *              description="Sort direction for the 'completed_at' field."
-     *          ),
-     *          @OA\Property(
-     *              property="created_at",
+     *              enum={"asc", "desc"}
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="sort[created_at]",
+     *          in="query",
+     *          description="Sort direction for the 'created_at' field.",
+     *          required=false,
+     *          @OA\Schema(
      *              type="string",
-     *              enum={"asc", "desc"},
-     *              description="Sort direction for the 'created_at' field."
-     *          ),
-     *          example={"completed_at": "desc", "created_at": "asc"}
-     *      )
-     *  ),
+     *              enum={"asc", "desc"}
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *           name="sort[priority]",
+     *           in="query",
+     *           description="Sort direction for the 'priority' field.",
+     *           required=false,
+     *           @OA\Schema(
+     *               type="string",
+     *               enum={"asc", "desc"}
+     *           )
+     *       ),
      *     @OA\Response(
      *         response=200,
      *         description="A list of tasks",
@@ -90,7 +104,7 @@ class TaskController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=400, description="Invalid request"),
-     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
     public function index(TaskFiltersRequest $request): JsonResponse

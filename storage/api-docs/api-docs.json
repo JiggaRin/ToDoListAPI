@@ -104,8 +104,13 @@
                         "name": "status",
                         "in": "query",
                         "description": "Filter tasks by status",
+                        "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "todo",
+                                "done"
+                            ]
                         }
                     },
                     {
@@ -114,7 +119,14 @@
                         "description": "Filter tasks by priority",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "enum": [
+                                1,
+                                2,
+                                3,
+                                4,
+                                5
+                            ]
                         }
                     },
                     {
@@ -127,34 +139,42 @@
                         }
                     },
                     {
-                        "name": "sort",
+                        "name": "sort[completed_at]",
                         "in": "query",
-                        "description": "Sort tasks by multiple fields and directions. Provide sorting as an object with field names and directions. You can sort by priority, created_at, completed_at",
+                        "description": "Sort direction for the 'completed_at' field.",
                         "required": false,
                         "schema": {
-                            "properties": {
-                                "completed_at": {
-                                    "description": "Sort direction for the 'completed_at' field.",
-                                    "type": "string",
-                                    "enum": [
-                                        "asc",
-                                        "desc"
-                                    ]
-                                },
-                                "created_at": {
-                                    "description": "Sort direction for the 'created_at' field.",
-                                    "type": "string",
-                                    "enum": [
-                                        "asc",
-                                        "desc"
-                                    ]
-                                }
-                            },
-                            "type": "object",
-                            "example": {
-                                "completed_at": "desc",
-                                "created_at": "asc"
-                            }
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort[created_at]",
+                        "in": "query",
+                        "description": "Sort direction for the 'created_at' field.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort[priority]",
+                        "in": "query",
+                        "description": "Sort direction for the 'priority' field.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
                         }
                     }
                 ],
