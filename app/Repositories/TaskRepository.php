@@ -15,7 +15,6 @@ class TaskRepository implements TaskRepositoryInterface
     public function getTasksByFilters(array $filters): Collection
     {
         $query = Task::where('user_id', auth()->id())
-//            ->whereNull('parent_id')
             ->status($filters['status'] ?? null)
             ->priority($filters['priority'] ?? null)
             ->search($filters['search'] ?? null);

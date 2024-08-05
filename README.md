@@ -8,11 +8,11 @@ The Todo List API is a RESTful API designed to manage tasks within a to-do list.
 
 - **Task Management**
     - Create, update, and delete tasks
-    - Mark tasks as completed
+    - Change task status
     - Nested tasks with unlimited depth
 
 - **Filtering**
-    - Filter tasks by `status`, `priority`, `title`, and `description`
+    - Filter tasks by `status`, `priority`
     - Full-text search for `title` and `description`
 
 - **Sorting**
