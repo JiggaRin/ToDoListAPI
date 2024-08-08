@@ -117,7 +117,7 @@ class TaskController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/tasks/show/{task}",
+     *     path="/api/tasks/{task}",
      *     summary="Show a specific task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -152,7 +152,7 @@ class TaskController extends Controller
 
     /**
      * @OA\POST(
-     *     path="/api/tasks/store",
+     *     path="/api/tasks",
      *     summary="Create a new task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -196,7 +196,7 @@ class TaskController extends Controller
 
     /**
      * @OA\PUT(
-     *     path="/api/tasks/update/{task}",
+     *     path="/api/tasks/{task}",
      *     summary="Update specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -246,7 +246,7 @@ class TaskController extends Controller
 
     /**
      * @OA\PUT(
-     *     path="/api/tasks/change-status/{task}",
+     *     path="/api/tasks/{task}/status",
      *     summary="Change status for specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},
@@ -290,7 +290,7 @@ class TaskController extends Controller
 
     /**
      * @OA\DELETE(
-     *     path="/api/tasks/destroy/{task}",
+     *     path="/api/tasks/{task}",
      *     summary="Delete specified task",
      *     tags={"Tasks"},
      *     security={{"bearerAuth":{}}},

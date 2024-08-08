@@ -209,15 +209,63 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Create a new task",
+                "operationId": "5bd1121aa4a0bb52b5468155c4084d3e",
+                "requestBody": {
+                    "description": "Create Task Request",
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Task created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/tasks/show/{task}": {
+        "/api/tasks/{task}": {
             "get": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Show a specific task",
-                "operationId": "6c4ba7d908a58e17f846cfca17f59005",
+                "operationId": "760ebeb16cb16ec34b59f24b7c239ad0",
                 "parameters": [
                     {
                         "name": "task",
@@ -263,65 +311,13 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/tasks/store": {
-            "post": {
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Create a new task",
-                "operationId": "d473de3f5f10f556d65c15212c685f40",
-                "requestBody": {
-                    "description": "Create Task Request",
-                    "required": true,
-                    "content": {
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateTaskRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Task created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Task"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationError"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/tasks/update/{task}": {
+            },
             "put": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Update specified task",
-                "operationId": "1d9060899a3a0cb2a88a07982a3a830d",
+                "operationId": "9da3a9bef6124e995524be1f8172f0f8",
                 "parameters": [
                     {
                         "name": "task",
@@ -367,66 +363,13 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/tasks/change-status/{task}": {
-            "put": {
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Change status for specified task",
-                "operationId": "be8212e9f3555dd1d0c3ebff22c7e2c1",
-                "parameters": [
-                    {
-                        "name": "task",
-                        "in": "path",
-                        "description": "ID of the task to update",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Change Task Status",
-                    "required": true,
-                    "content": {
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ChangeTaskStatusRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationError"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/tasks/destroy/{task}": {
+            },
             "delete": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Delete specified task",
-                "operationId": "af2e97a612b75130655aad2cd32f79e4",
+                "operationId": "a7406ac56cf85985bce27d5a943df31d",
                 "parameters": [
                     {
                         "name": "task",
@@ -464,6 +407,57 @@
                     },
                     "404": {
                         "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks/{task}/status": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Change status for specified task",
+                "operationId": "6e1e7ca94b501c47f4f968c5fba91426",
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "description": "ID of the task to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Change Task Status",
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeTaskStatusRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
